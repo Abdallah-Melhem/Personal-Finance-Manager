@@ -1,9 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../services/api';
 import TransactionList from '../components/TransactionList';
+import TransactionFilters from '../components/TransactionFilters';
+import Pagination from '../components/Pagination';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
+
+const DEFAULT_FILTERS = {
+  search: '',
+  type: '',
+  category: '',
+  startDate: '',
+  endDate: '',
+};
+const PAGE_LIMIT = 10;
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
@@ -12,13 +23,32 @@ const Transactions = () => {
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const [isDeletingId, setIsDeletingId] = useState(null);
 
-  const fetchTransactions = async () => {
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
+  // Debounce timer for search input
+  const searchTimer = useRef(null);
+
+  const fetchTransactions = useCallback(async (activeFilters, page) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await API.get('/transactions');
+      const params = new URLSearchParams();
+      if (activeFilters.search) params.append('search', activeFilters.search);
+      if (activeFilters.type) params.append('type', activeFilters.type);
+      if (activeFilters.category) params.append('category', activeFilters.category);
+      if (activeFilters.startDate) params.append('startDate', activeFilters.startDate);
+      if (activeFilters.endDate) params.append('endDate', activeFilters.endDate);
+      params.append('page', page);
+      params.append('limit', PAGE_LIMIT);
+
+      const response = await API.get(`/transactions?${params.toString()}`);
       if (response.data.success) {
         setTransactions(response.data.transactions);
+        setTotalPages(response.data.totalPages || 1);
+        setTotalCount(response.data.totalCount || 0);
       }
     } catch (err) {
       setError(
@@ -28,57 +58,66 @@ const Transactions = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchTransactions();
   }, []);
 
+  // Fetch on filters or page change (debounce search)
+  useEffect(() => {
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => {
+      fetchTransactions(filters, currentPage);
+    }, 350);
+    return () => clearTimeout(searchTimer.current);
+  }, [filters, currentPage, fetchTransactions]);
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    setCurrentPage(1); // reset to page 1 on filter change
+  };
+
+  const handleResetFilters = () => {
+    setFilters(DEFAULT_FILTERS);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this transaction?')) {
-      return;
-    }
+    if (!window.confirm('Are you sure you want to delete this transaction?')) return;
 
     setIsDeletingId(id);
     try {
       const response = await API.delete(`/transactions/${id}`);
       if (response.data.success) {
-        setTransactions((prev) => prev.filter((t) => t._id !== id));
-        setFeedback({
-          type: 'success',
-          message: 'Transaction deleted successfully.',
-        });
+        setFeedback({ type: 'success', message: 'Transaction deleted successfully.' });
         setTimeout(() => setFeedback({ type: '', message: '' }), 4000);
+        // Refetch current page (page may now be empty)
+        fetchTransactions(filters, currentPage);
       }
     } catch (err) {
       setFeedback({
         type: 'danger',
-        message:
-          err.response?.data?.message || 'Failed to delete transaction.',
+        message: err.response?.data?.message || 'Failed to delete transaction.',
       });
     } finally {
       setIsDeletingId(null);
     }
   };
 
-  // Calculate quick totals
-  const totalIncome = transactions
-    .filter((t) => t.type === 'income')
-    .reduce((sum, t) => sum + Number(t.amount), 0);
-
-  const totalExpense = transactions
-    .filter((t) => t.type === 'expense')
-    .reduce((sum, t) => sum + Number(t.amount), 0);
-
-  const balance = totalIncome - totalExpense;
+  const isFiltered = Object.values(filters).some((v) => v !== '');
 
   return (
     <div className="container py-4">
+      {/* Header */}
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <div>
           <h2 className="fw-bold mb-1 text-primary">Transactions</h2>
           <p className="text-muted mb-0 small">
-            Review and manage all your income and expense records.
+            {isFiltered
+              ? `Showing ${totalCount} result${totalCount !== 1 ? 's' : ''} for active filters.`
+              : `You have ${totalCount} transaction${totalCount !== 1 ? 's' : ''} total.`}
           </p>
         </div>
         <Link to="/transactions/add" className="btn btn-primary px-3 shadow-sm">
@@ -86,9 +125,10 @@ const Transactions = () => {
         </Link>
       </div>
 
+      {/* Feedback */}
       {feedback.message && (
         <div
-          className={`alert alert-${feedback.type} alert-dismissible fade show py-2 small`}
+          className={`alert alert-${feedback.type} alert-dismissible fade show py-2 small mb-3`}
           role="alert"
         >
           {feedback.message}
@@ -101,41 +141,64 @@ const Transactions = () => {
         </div>
       )}
 
-      {/* Quick metrics bar */}
-      <div className="row g-3 mb-3">
-        <div className="col-sm-4">
-          <div className="card border-0 shadow-sm p-3 bg-white">
-            <div className="text-muted small">Total Income</div>
-            <div className="fs-5 fw-bold text-success">+${totalIncome.toFixed(2)}</div>
-          </div>
-        </div>
-        <div className="col-sm-4">
-          <div className="card border-0 shadow-sm p-3 bg-white">
-            <div className="text-muted small">Total Expenses</div>
-            <div className="fs-5 fw-bold text-danger">-${totalExpense.toFixed(2)}</div>
-          </div>
-        </div>
-        <div className="col-sm-4">
-          <div className="card border-0 shadow-sm p-3 bg-white">
-            <div className="text-muted small">Current Balance</div>
-            <div className={`fs-5 fw-bold ${balance >= 0 ? 'text-primary' : 'text-danger'}`}>
-              ${balance.toFixed(2)}
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Filters */}
+      <TransactionFilters
+        filters={filters}
+        onChange={handleFilterChange}
+        onReset={handleResetFilters}
+      />
 
       {/* Content */}
       {loading ? (
         <LoadingSpinner message="Fetching your transactions..." />
       ) : error ? (
-        <ErrorMessage message={error} onRetry={fetchTransactions} />
-      ) : (
-        <TransactionList
-          transactions={transactions}
-          onDelete={handleDelete}
-          isDeletingId={isDeletingId}
+        <ErrorMessage
+          message={error}
+          onRetry={() => fetchTransactions(filters, currentPage)}
         />
+      ) : transactions.length === 0 ? (
+        <div className="card border-0 shadow-sm p-5 text-center mt-2">
+          <div className="text-muted mb-3 fs-1">🔍</div>
+          <h5 className="fw-bold text-secondary">
+            {isFiltered ? 'No transactions match your filters' : 'No transactions yet'}
+          </h5>
+          <p className="text-muted small mb-3">
+            {isFiltered
+              ? 'Try adjusting the search terms or clearing the filters.'
+              : 'Add your first income or expense to get started.'}
+          </p>
+          <div className="d-flex justify-content-center gap-2">
+            {isFiltered && (
+              <button
+                className="btn btn-outline-secondary btn-sm"
+                onClick={handleResetFilters}
+              >
+                Clear Filters
+              </button>
+            )}
+            <Link to="/transactions/add" className="btn btn-primary btn-sm">
+              Add Transaction
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <>
+          <TransactionList
+            transactions={transactions}
+            onDelete={handleDelete}
+            isDeletingId={isDeletingId}
+          />
+          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-2 gap-2">
+            <p className="text-muted small mb-0">
+              Page {currentPage} of {totalPages} &nbsp;·&nbsp; {totalCount} total record{totalCount !== 1 ? 's' : ''}
+            </p>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        </>
       )}
     </div>
   );
