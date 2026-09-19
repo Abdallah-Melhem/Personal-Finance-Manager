@@ -1,0 +1,21 @@
+{
+  "name": "personal-finance-management",
+  "version": "1.0.0",
+  "description": "Personal Finance Management System - Full-Stack MERN Academic Project",
+  "private": true,
+  "scripts": {
+    "server": "npm run dev --prefix server",
+    "client": "npm run dev --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "keywords": [
+    "mern",
+    "finance",
+    "react",
+    "express",
+    "mongodb",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC"
+}
