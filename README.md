@@ -1,187 +1,350 @@
-# Personal Finance Management System
+# 💰 FinTrack — Personal Finance Management System
 
-A complete academic Full-Stack Web Development application built using the **MERN** stack (MongoDB, Express.js, React, Node.js).
+> A full-stack MERN web application for tracking income, expenses, and financial goals. Built as a comprehensive academic project demonstrating modern web development practices.
 
----
-
-## 1. Project Overview
-
-The **Personal Finance Management System** provides registered users with a secure, responsive, and intuitive web application to track their personal income and expenses. The system implements core full-stack web development concepts—authentication, authorization, RESTful API design, database modeling, CRUD operations, state management, data visualization, search, filtering, and pagination.
-
-### Key Objectives
-* Demonstrates full-stack software development best practices using the MERN stack.
-* Implements robust user authentication with JWT and bcrypt password hashing.
-* Enforces strict data ownership: users can only view and manage their own financial records.
-* Provides interactive financial dashboards with real-time calculations and visual charts.
+![Node.js](https://img.shields.io/badge/Node.js-v18+-339933?logo=node.js&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
+![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white)
+![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-7952B3?logo=bootstrap&logoColor=white)
 
 ---
 
-## 2. Technology Stack
+## 📋 Table of Contents
 
-### Frontend
-* **React (Vite)**: Component-based UI library and fast modern build tool (JavaScript).
-* **React Router**: Client-side routing for public and protected views.
-* **Axios**: Promise-based HTTP client for API communication.
-* **Context API**: Global state management for authentication and session status.
-* **Bootstrap**: Responsive UI styling and components.
-* **Recharts**: Declarative data visualization library for financial charts.
-
-### Backend
-* **Node.js**: Asynchronous event-driven JavaScript runtime.
-* **Express.js**: Web framework for building RESTful APIs and middleware pipelines.
-* **Mongoose**: Object Data Modeling (ODM) library for MongoDB.
-* **jsonwebtoken (JWT)**: Stateless token-based user authentication and route protection.
-* **bcrypt**: Industry-standard password hashing algorithm.
-* **express-validator**: Server-side request validation and sanitization.
-* **Multer**: Middleware for handling `multipart/form-data` and profile image uploads.
-* **dotenv**: Environment variable management.
-* **cors**: Cross-Origin Resource Sharing handling.
-
-### Database
-* **MongoDB Atlas**: Fully managed cloud-native NoSQL database.
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [API Reference](#api-reference)
+- [Screenshots](#screenshots)
+- [Testing](#testing)
 
 ---
 
-## 3. System Architecture
+## Overview
+
+**FinTrack** is a Personal Finance Management System built with the MERN stack (MongoDB, Express.js, React, Node.js). It allows registered users to record and categorize their income and expenses, visualize their financial health through an interactive dashboard with charts, filter and search through transactions, manage their account profile, and upload a custom avatar.
+
+This project was built as a full academic assignment covering all layers of a production-ready web application — from database modeling and RESTful API design to a responsive React frontend.
+
+---
+
+## ✨ Features
+
+### Authentication & Security
+- 🔐 **JWT-based authentication** with secure token storage
+- 🔒 **Password hashing** using bcrypt
+- 🛡️ **Protected routes** on both client and server
+- 👤 **User-scoped data** — each user can only access their own records
+
+### Transaction Management
+- ➕ **Add** income and expense transactions
+- ✏️ **Edit** transaction details
+- 🗑️ **Delete** with a confirmation modal
+- 🏷️ **Categorized** (Salary, Food, Bills, Transportation, etc.)
+
+### Search, Filtering & Pagination
+- 🔍 **Keyword search** across description and category (debounced)
+- 🗂️ **Multi-filter**: type, category, and custom date range
+- 📄 **Server-side pagination** (10 records per page with navigation)
+
+### Dashboard & Analytics
+- 📊 **Summary cards**: Balance, Total Income, Total Expenses, Transaction Count
+- 📈 **Bar chart**: Monthly income vs expenses (Recharts)
+- 🥧 **Donut chart**: Expenses breakdown by category (Recharts, interactive)
+- 🕒 **Recent transactions** table on dashboard
+
+### User Profile
+- 🖼️ **Profile picture upload** (JPEG, PNG, WebP — max 5MB, via Multer)
+- ✏️ **Update name and email**
+- 🔑 **Change password** with current password verification
+
+### Developer Quality
+- ✅ **Express-validator** input validation on all endpoints
+- ⚠️ **Centralized error handling** (CastError, duplicate key, JWT errors, 404)
+- 📦 **Modular architecture** (routes → controllers → models → middleware)
+- 🧪 **40-test automated suite** covering all phases
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Frontend** | React 18, Vite, React Router v6 |
+| **UI Library** | Bootstrap 5, Bootstrap Icons |
+| **Charts** | Recharts |
+| **Backend** | Node.js, Express.js 4 |
+| **Database** | MongoDB Atlas (Mongoose ODM) |
+| **Authentication** | JSON Web Tokens (JWT), bcrypt |
+| **File Uploads** | Multer |
+| **Validation** | express-validator |
+| **Dev Tools** | nodemon, concurrently |
+
+---
+
+## 📁 Project Structure
 
 ```
-React Frontend (Vite)
-       │
-       │ HTTP / REST API (Axios + JWT Bearer Header)
-       ▼
-Express REST API (Routes & Controllers)
-       │
-       │ Middleware (Auth, Validation, Error Handling)
-       ▼
-Node.js Runtime
-       │
-       │ Mongoose ODM
-       ▼
-MongoDB Atlas (Users, Transactions)
-```
-
----
-
-## 4. Project Directory Structure
-
-```
-personal-finance-management/
-├── client/                     # Frontend React (Vite) application
+fintrack-mern/
+├── client/                     # React + Vite frontend
+│   ├── public/
 │   ├── src/
-│   │   ├── components/         # Reusable UI components (Navbar, ProtectedRoute, Cards)
-│   │   ├── pages/              # Routed pages (Login, Register, Dashboard, Transactions, Profile)
-│   │   ├── context/            # React Contexts (AuthContext)
-│   │   ├── services/           # Axios instance and API call services
-│   │   ├── utils/              # Client helper functions and formatters
-│   │   ├── App.jsx             # Root React component & route definitions
-│   │   ├── main.jsx            # React entry point
-│   │   └── App.css             # Global styles
+│   │   ├── components/
+│   │   │   ├── ConfirmModal.jsx
+│   │   │   ├── ErrorMessage.jsx
+│   │   │   ├── LoadingSpinner.jsx
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Pagination.jsx
+│   │   │   ├── ProtectedRoute.jsx
+│   │   │   ├── TransactionFilters.jsx
+│   │   │   ├── TransactionForm.jsx
+│   │   │   └── TransactionList.jsx
+│   │   ├── context/
+│   │   │   └── AuthContext.jsx
+│   │   ├── pages/
+│   │   │   ├── AddTransaction.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── EditTransaction.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Profile.jsx
+│   │   │   ├── Register.jsx
+│   │   │   └── Transactions.jsx
+│   │   ├── services/
+│   │   │   └── api.js
+│   │   ├── App.jsx
+│   │   └── main.jsx
 │   └── package.json
 │
-├── server/                     # Backend Node.js & Express application
-│   ├── config/                 # Configuration files (Database connection)
-│   ├── controllers/            # Route controllers handling business logic
-│   ├── middleware/             # Custom middleware (Auth, error handlers)
-│   ├── models/                 # Mongoose schemas and models (User, Transaction)
-│   ├── routes/                 # Express API routes
-│   ├── utils/                  # Backend utilities (JWT token generators)
-│   ├── uploads/                # Directory for user profile pictures
-│   ├── server.js               # Express application entry point
+├── server/                     # Express.js backend
+│   ├── controllers/
+│   │   ├── authController.js
+│   │   ├── dashboardController.js
+│   │   ├── transactionController.js
+│   │   └── userController.js
+│   ├── middleware/
+│   │   ├── authMiddleware.js
+│   │   ├── errorMiddleware.js
+│   │   ├── uploadMiddleware.js
+│   │   └── validatorMiddleware.js
+│   ├── models/
+│   │   ├── Transaction.js
+│   │   └── User.js
+│   ├── routes/
+│   │   ├── authRoutes.js
+│   │   ├── dashboardRoutes.js
+│   │   ├── transactionRoutes.js
+│   │   └── userRoutes.js
+│   ├── uploads/               # Profile picture storage (git-ignored)
+│   ├── testRunner.js          # Automated test suite (40 tests)
+│   ├── server.js
 │   └── package.json
 │
-├── .env.example                # Example environment variables template
-├── .gitignore                  # Git ignore specifications
-├── package.json                # Root package configuration
-└── README.md                   # Project documentation
+├── .env.example               # Environment variable template
+├── package.json               # Root scripts (concurrently)
+└── README.md
 ```
 
 ---
 
-## 5. Database Schema
+## 🚀 Getting Started
 
-### User Model (`users` collection)
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `_id` | ObjectId | Auto-generated unique identifier |
-| `name` | String | User's full name (Required, Trimmed) |
-| `email` | String | Unique email address (Required, Lowercase, Indexed) |
-| `password` | String | Hashed password via bcrypt (Required) |
-| `profilePicture` | String | URL or file path to avatar image |
-| `createdAt` | Date | Timestamp of account creation |
-| `updatedAt` | Date | Timestamp of last profile update |
+### Prerequisites
 
-### Transaction Model (`transactions` collection)
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `_id` | ObjectId | Auto-generated unique identifier |
-| `user` | ObjectId | Reference to `User` model (Required, Indexed) |
-| `type` | String | `income` or `expense` (Required) |
-| `amount` | Number | Transaction amount, positive value (Required) |
-| `category` | String | Specific category (e.g., Salary, Food, Bills) (Required) |
-| `description` | String | Optional transaction notes/description |
-| `date` | Date | Date of transaction (Required, Defaults to current date) |
-| `createdAt` | Date | Timestamp of record creation |
-| `updatedAt` | Date | Timestamp of last record update |
+- **Node.js** v18 or higher
+- **npm** v9 or higher
+- A free **MongoDB Atlas** account ([cloud.mongodb.com](https://cloud.mongodb.com))
 
----
+### 1. Clone the Repository
 
-## 6. REST API Specification
+```bash
+git clone https://github.com/YOUR_USERNAME/fintrack-mern.git
+cd fintrack-mern
+```
 
-### Authentication (`/api/auth`)
-* `POST /api/auth/register` — Register a new user account.
-* `POST /api/auth/login` — Authenticate user and issue JWT token.
-* `GET /api/auth/me` — Retrieve current authenticated user details.
-* `POST /api/auth/logout` — Client session invalidation.
+### 2. Install Dependencies
 
-### User Profile (`/api/users`)
-* `GET /api/users/profile` — Get profile information of the current user.
-* `PUT /api/users/profile` — Update user name and email.
-* `PUT /api/users/password` — Change account password (verifies current password).
-* `POST /api/users/profile-picture` — Upload and update profile picture using Multer.
+```bash
+# Install root + all workspace dependencies (server + client)
+npm install
+```
 
-### Transactions (`/api/transactions`)
-* `GET /api/transactions` — Get transactions for authenticated user (supports search, filter, pagination).
-* `POST /api/transactions` — Create a new transaction (income/expense).
-* `GET /api/transactions/:id` — Get single transaction details by ID.
-* `PUT /api/transactions/:id` — Update an existing transaction.
-* `DELETE /api/transactions/:id` — Delete a transaction.
+### 3. Set Up Environment Variables
 
-### Dashboard (`/api/dashboard`)
-* `GET /api/dashboard/summary` — Retrieve financial totals: income, expenses, balance, count, and recent transactions.
-* `GET /api/dashboard/categories` — Get aggregated expense totals grouped by category.
-* `GET /api/dashboard/monthly` — Get monthly trend comparison for income vs. expenses.
+```bash
+# Copy the example environment file
+cp server/.env.example server/.env
+```
 
----
-
-## 7. Environment Variables Setup
-
-Create a `.env` file in the `server/` directory (or workspace root as configured) containing:
+Then open `server/.env` and fill in your values:
 
 ```env
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/fintrack?retryWrites=true&w=majority
+JWT_SECRET=your_strong_secret_key_here
 PORT=5000
 NODE_ENV=development
-MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/personal_finance_db?retryWrites=true&w=majority
-JWT_SECRET=your_jwt_secret_key_here
-CLIENT_URL=http://localhost:5173
 ```
 
-> **Note**: Never commit `.env` files into version control.
+> **MongoDB Atlas Setup**: Create a free cluster → Create a database user → Whitelist your IP → Copy the connection string.
+
+### 4. Start the Application
+
+```bash
+# Starts both backend (port 5000) and frontend (port 5173) concurrently
+npm run dev
+```
+
+Then open your browser at: **[http://localhost:5173](http://localhost:5173)**
 
 ---
 
-## 8. Implementation Phases
+## ⚙️ Environment Variables
 
-1. **Phase 0 — Project Planning**: Requirements analysis, architecture definition, folder structure, repository setup.
-2. **Phase 1 — Project Setup**: React/Vite frontend and Node/Express backend scaffolding, MongoDB connection, health check.
-3. **Phase 2 — Database Models**: Mongoose User and Transaction schemas with validation and relationships.
-4. **Phase 3 — Authentication**: JWT auth, bcrypt hashing, auth middleware, and protected endpoints.
-5. **Phase 4 — Transaction CRUD API**: Full backend CRUD for income/expense records with strict user ownership.
-6. **Phase 5 — React Authentication**: React Router, AuthContext, login/register forms, protected client routes, navbar.
-7. **Phase 6 — Transaction Frontend**: Transaction forms, lists, CRUD operations via Axios, loading/error states.
-8. **Phase 7 — Dashboard**: Financial KPI summary cards, Recharts visualizations (income vs expense, category split).
-9. **Phase 8 — Search, Filtering and Pagination**: Server-side filtering, multi-parameter search, paginated results.
-10. **Phase 9 — Validation and Error Handling**: Centralized error middleware, express-validator, user feedback toasts.
-11. **Phase 10 — User Profile**: Profile editing, password change, Multer image upload.
-12. **Phase 11 — UI Polish**: Responsive layout improvements, clean Bootstrap styling, empty states.
-13. **Phase 12 — Testing**: End-to-end verification, security audits, regression checks.
-14. **Phase 13 — Deployment**: Production environment preparation and deployment guide.
+Create a file at `server/.env` based on `server/.env.example`:
+
+| Variable | Description | Example |
+|---|---|---|
+| `MONGO_URI` | MongoDB Atlas connection string | `mongodb+srv://...` |
+| `JWT_SECRET` | Secret key for signing JWTs | Any long random string |
+| `PORT` | Backend server port | `5000` |
+| `NODE_ENV` | Environment mode | `development` |
+
+---
+
+## 📡 API Reference
+
+All API endpoints are prefixed with `/api`. Protected routes require the header:
+```
+Authorization: Bearer <token>
+```
+
+### Auth — `/api/auth`
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `POST` | `/register` | ❌ | Register a new user |
+| `POST` | `/login` | ❌ | Login and receive JWT |
+| `POST` | `/logout` | ❌ | Logout (client-side token discard) |
+| `GET` | `/me` | ✅ | Get current user info |
+
+### Transactions — `/api/transactions`
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/` | ✅ | List transactions (with search, filter, pagination) |
+| `POST` | `/` | ✅ | Create a new transaction |
+| `GET` | `/:id` | ✅ | Get a single transaction |
+| `PUT` | `/:id` | ✅ | Update a transaction |
+| `DELETE` | `/:id` | ✅ | Delete a transaction |
+
+**Query Parameters for `GET /`:**
+
+| Param | Type | Description |
+|---|---|---|
+| `search` | `string` | Keyword search (description or category) |
+| `type` | `income` \| `expense` | Filter by type |
+| `category` | `string` | Filter by exact category |
+| `startDate` | `YYYY-MM-DD` | Date range start |
+| `endDate` | `YYYY-MM-DD` | Date range end |
+| `page` | `number` | Page number (default: 1) |
+| `limit` | `number` | Items per page (default: 10, max: 50) |
+
+### Dashboard — `/api/dashboard`
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/summary` | ✅ | Total income, expense, balance, recent transactions |
+| `GET` | `/categories` | ✅ | Expense breakdown by category |
+| `GET` | `/monthly` | ✅ | Monthly income vs expense grouped by month |
+
+### Users — `/api/users`
+
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| `GET` | `/profile` | ✅ | Get user profile |
+| `PUT` | `/profile` | ✅ | Update name and email |
+| `PUT` | `/password` | ✅ | Change password |
+| `POST` | `/profile-picture` | ✅ | Upload profile picture (multipart/form-data) |
+
+---
+
+## 🧪 Testing
+
+A comprehensive automated test suite is included. To run it:
+
+```bash
+# In one terminal — start the server
+cd server
+npm run dev
+
+# In another terminal — run the 40-test suite
+cd server
+node testRunner.js
+```
+
+### Test Coverage (40 Tests, 13 Categories)
+
+| # | Category | Tests |
+|---|---|---|
+| 1 | Registration | 4 |
+| 2 | Login | 2 |
+| 3 | Logout | 1 |
+| 4 | Protected Routes | 3 |
+| 5 | Transaction CRUD | 7 |
+| 6 | Ownership & Data Isolation | 4 |
+| 7 | Keyword Search | 1 |
+| 8 | Filters | 2 |
+| 9 | Pagination | 1 |
+| 10 | Dashboard Endpoints | 6 |
+| 11 | User Profile & Avatar | 5 |
+| 12 | Input Validation | 2 |
+| 13 | Centralized Error Handling | 2 |
+
+---
+
+## 📜 Available Scripts
+
+### Root (from project root)
+
+| Script | Description |
+|---|---|
+| `npm run dev` | Start both server and client concurrently |
+| `npm run server` | Start only the backend server |
+| `npm run client` | Start only the frontend (Vite dev server) |
+
+### Server (`/server`)
+
+| Script | Description |
+|---|---|
+| `npm start` | Start with Node.js |
+| `npm run dev` | Start with nodemon (auto-reload) |
+
+### Client (`/client`)
+
+| Script | Description |
+|---|---|
+| `npm run dev` | Start Vite development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
+
+---
+
+## 🔒 Security Notes
+
+- Passwords are hashed with **bcrypt** (salt rounds: 10) before storage — plaintext passwords are never saved.
+- JWTs are signed with a secret key and expire after **7 days**.
+- All API routes that access user data verify ownership before returning or modifying data, preventing cross-user data leaks.
+- File uploads are restricted to images only (JPEG, PNG, WebP) with a 5MB size cap.
+
+---
+
+## 📄 License
+
+This project is built as an academic assignment and is open for educational reference.
+
+---
+
+*Built with ❤️ using the MERN Stack*
