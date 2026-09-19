@@ -30,6 +30,9 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files (uploaded profile pictures)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Routes
+app.use('/api/auth', require('./routes/authRoutes'));
+
 // Health-check endpoint
 app.get('/api/health', (req, res) => {
   const dbStateMap = {
