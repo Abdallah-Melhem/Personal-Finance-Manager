@@ -7,10 +7,15 @@ const {
   logoutUser,
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
+const {
+  validate,
+  registerValidationRules,
+  loginValidationRules,
+} = require('../middleware/validatorMiddleware');
 
-// Public routes
-router.post('/register', registerUser);
-router.post('/login', loginUser);
+// Public routes with validation
+router.post('/register', registerValidationRules, validate, registerUser);
+router.post('/login', loginValidationRules, validate, loginUser);
 router.post('/logout', logoutUser);
 
 // Protected routes

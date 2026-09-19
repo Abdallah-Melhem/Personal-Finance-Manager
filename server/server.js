@@ -61,6 +61,11 @@ app.get('/', (req, res) => {
   });
 });
 
+// Centralized Error Handling Middleware
+const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+app.use(notFound);
+app.use(errorHandler);
+
 // Port configuration
 const PORT = process.env.PORT || 5000;
 

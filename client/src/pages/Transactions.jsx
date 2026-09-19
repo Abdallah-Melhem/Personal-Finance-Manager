@@ -6,6 +6,7 @@ import TransactionFilters from '../components/TransactionFilters';
 import Pagination from '../components/Pagination';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
+import ConfirmModal from '../components/ConfirmModal';
 
 const DEFAULT_FILTERS = {
   search: '',
@@ -22,6 +23,7 @@ const Transactions = () => {
   const [error, setError] = useState(null);
   const [feedback, setFeedback] = useState({ type: '', message: '' });
   const [isDeletingId, setIsDeletingId] = useState(null);
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
 
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
   const [currentPage, setCurrentPage] = useState(1);
@@ -84,16 +86,20 @@ const Transactions = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this transaction?')) return;
+  const handleInitiateDelete = (id) => {
+    setDeleteTargetId(id);
+  };
 
-    setIsDeletingId(id);
+  const handleConfirmDelete = async () => {
+    if (!deleteTargetId) return;
+
+    setIsDeletingId(deleteTargetId);
     try {
-      const response = await API.delete(`/transactions/${id}`);
+      const response = await API.delete(`/transactions/${deleteTargetId}`);
       if (response.data.success) {
         setFeedback({ type: 'success', message: 'Transaction deleted successfully.' });
         setTimeout(() => setFeedback({ type: '', message: '' }), 4000);
-        // Refetch current page (page may now be empty)
+        setDeleteTargetId(null);
         fetchTransactions(filters, currentPage);
       }
     } catch (err) {
@@ -101,6 +107,7 @@ const Transactions = () => {
         type: 'danger',
         message: err.response?.data?.message || 'Failed to delete transaction.',
       });
+      setDeleteTargetId(null);
     } finally {
       setIsDeletingId(null);
     }
@@ -185,7 +192,7 @@ const Transactions = () => {
         <>
           <TransactionList
             transactions={transactions}
-            onDelete={handleDelete}
+            onDelete={handleInitiateDelete}
             isDeletingId={isDeletingId}
           />
           <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-2 gap-2">
@@ -200,6 +207,19 @@ const Transactions = () => {
           </div>
         </>
       )}
+
+      {/* Reusable Delete Confirmation Modal */}
+      <ConfirmModal
+        show={!!deleteTargetId}
+        title="Delete Transaction"
+        message="Are you sure you want to permanently delete this transaction? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        confirmVariant="danger"
+        isProcessing={!!isDeletingId}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteTargetId(null)}
+      />
     </div>
   );
 };
