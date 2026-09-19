@@ -5,6 +5,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Transactions from './pages/Transactions';
+import AddTransaction from './pages/AddTransaction';
+import EditTransaction from './pages/EditTransaction';
 
 function App() {
   return (
@@ -24,6 +27,30 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/transactions"
+                element={
+                  <ProtectedRoute>
+                    <Transactions />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/transactions/add"
+                element={
+                  <ProtectedRoute>
+                    <AddTransaction />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/transactions/edit/:id"
+                element={
+                  <ProtectedRoute>
+                    <EditTransaction />
                   </ProtectedRoute>
                 }
               />
