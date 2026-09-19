@@ -10,6 +10,9 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  const baseURL = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace('/api', '');
+  const avatarSrc = user?.profilePicture ? `${baseURL}${user.profilePicture}` : null;
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
       <div className="container">
@@ -53,10 +56,29 @@ const Navbar = () => {
                   </NavLink>
                 </li>
               </ul>
-              <div className="d-flex align-items-center">
-                <span className="text-white-50 me-3 small">
-                  Signed in as <strong className="text-white">{user?.name}</strong>
-                </span>
+              <div className="d-flex align-items-center gap-2">
+                <Link
+                  to="/profile"
+                  className="d-flex align-items-center text-decoration-none text-white me-2 px-2 py-1 rounded bg-white bg-opacity-10 hover-opacity"
+                  title="View Profile"
+                >
+                  {avatarSrc ? (
+                    <img
+                      src={avatarSrc}
+                      alt={user?.name}
+                      className="rounded-circle me-2 border border-white"
+                      style={{ width: '28px', height: '28px', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div
+                      className="rounded-circle bg-white text-primary fw-bold d-flex align-items-center justify-content-center me-2 small"
+                      style={{ width: '28px', height: '28px', fontSize: '0.85rem' }}
+                    >
+                      {user?.name?.charAt(0).toUpperCase() || 'U'}
+                    </div>
+                  )}
+                  <span className="small fw-semibold">{user?.name}</span>
+                </Link>
                 <button
                   className="btn btn-outline-light btn-sm"
                   onClick={handleLogout}

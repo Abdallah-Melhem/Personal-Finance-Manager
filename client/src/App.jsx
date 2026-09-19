@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import AddTransaction from './pages/AddTransaction';
 import EditTransaction from './pages/EditTransaction';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -51,6 +52,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <EditTransaction />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
                   </ProtectedRoute>
                 }
               />
