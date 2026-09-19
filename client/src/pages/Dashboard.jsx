@@ -22,13 +22,20 @@ import ErrorMessage from '../components/ErrorMessage';
 // ─────────────────────────────────────────
 // Summary Card
 // ─────────────────────────────────────────
-const SummaryCard = ({ title, value, colorClass, prefix = '$' }) => (
+const SummaryCard = ({ title, value, colorClass, prefix = '$', icon, bgClass }) => (
   <div className="card border-0 shadow-sm h-100">
-    <div className="card-body p-3 p-md-4">
-      <p className="text-muted small mb-1 fw-semibold text-uppercase">{title}</p>
-      <h3 className={`fw-bold mb-0 ${colorClass}`}>
-        {prefix}{typeof value === 'number' ? value.toFixed(2) : value}
-      </h3>
+    <div className="card-body p-3 p-md-4 d-flex align-items-center justify-content-between">
+      <div>
+        <p className="text-muted small mb-1 fw-semibold text-uppercase">{title}</p>
+        <h3 className={`fw-bold mb-0 ${colorClass}`}>
+          {prefix}{typeof value === 'number' ? value.toFixed(2) : value}
+        </h3>
+      </div>
+      {icon && (
+        <div className={`metric-card-icon ${bgClass}`}>
+          <i className={`bi ${icon}`}></i>
+        </div>
+      )}
     </div>
   </div>
 );
@@ -185,6 +192,8 @@ const Dashboard = () => {
                 title="Current Balance"
                 value={summary.balance}
                 colorClass={summary.balance >= 0 ? 'text-primary' : 'text-danger'}
+                icon="bi-wallet2"
+                bgClass="bg-primary-subtle text-primary"
               />
             </div>
             <div className="col-6 col-lg-3">
@@ -192,6 +201,8 @@ const Dashboard = () => {
                 title="Total Income"
                 value={summary.totalIncome}
                 colorClass="text-success"
+                icon="bi-arrow-up-right-circle"
+                bgClass="bg-success-subtle text-success"
               />
             </div>
             <div className="col-6 col-lg-3">
@@ -199,6 +210,8 @@ const Dashboard = () => {
                 title="Total Expenses"
                 value={summary.totalExpense}
                 colorClass="text-danger"
+                icon="bi-arrow-down-left-circle"
+                bgClass="bg-danger-subtle text-danger"
               />
             </div>
             <div className="col-6 col-lg-3">
@@ -207,6 +220,8 @@ const Dashboard = () => {
                 value={summary.transactionCount}
                 colorClass="text-secondary"
                 prefix=""
+                icon="bi-receipt"
+                bgClass="bg-secondary-subtle text-secondary"
               />
             </div>
           </div>

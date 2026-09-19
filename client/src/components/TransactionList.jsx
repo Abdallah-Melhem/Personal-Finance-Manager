@@ -5,15 +5,15 @@ const TransactionList = ({ transactions = [], onEdit, onDelete, isDeletingId = n
     return (
       <div className="card border-0 shadow-sm p-5 text-center my-3">
         <div className="text-muted mb-3">
-          <i className="bi bi-inbox fs-1"></i>
+          <i className="bi bi-inbox fs-1 text-secondary opacity-50"></i>
         </div>
         <h5 className="fw-bold text-secondary">No transactions recorded yet</h5>
         <p className="text-muted small mb-3">
           Start recording your income and expenses to see your balance and financial reports.
         </p>
         <div>
-          <Link to="/transactions/add" className="btn btn-primary btn-sm">
-            Add Your First Transaction
+          <Link to="/transactions/add" className="btn btn-primary btn-sm px-3 shadow-sm">
+            <i className="bi bi-plus-circle me-1"></i>Add Your First Transaction
           </Link>
         </div>
       </div>
@@ -31,7 +31,7 @@ const TransactionList = ({ transactions = [], onEdit, onDelete, isDeletingId = n
               <th scope="col" className="py-3">Category</th>
               <th scope="col" className="py-3">Description</th>
               <th scope="col" className="py-3 text-end">Amount</th>
-              <th scope="col" className="py-3 text-center" style={{ width: '140px' }}>
+              <th scope="col" className="py-3 text-center" style={{ width: '150px' }}>
                 Actions
               </th>
             </tr>
@@ -48,14 +48,18 @@ const TransactionList = ({ transactions = [], onEdit, onDelete, isDeletingId = n
               return (
                 <tr key={tx._id}>
                   <td className="px-3 text-nowrap small text-muted">
+                    <i className="bi bi-calendar3 me-1 opacity-50"></i>
                     {formattedDate}
                   </td>
                   <td>
                     <span
                       className={`badge rounded-pill ${
-                        isIncome ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'
+                        isIncome
+                          ? 'bg-success-subtle text-success border border-success-subtle'
+                          : 'bg-danger-subtle text-danger border border-danger-subtle'
                       } text-uppercase px-2`}
                     >
+                      <i className={`bi ${isIncome ? 'bi-arrow-down-left' : 'bi-arrow-up-right'} me-1`}></i>
                       {tx.type}
                     </span>
                   </td>
@@ -73,21 +77,23 @@ const TransactionList = ({ transactions = [], onEdit, onDelete, isDeletingId = n
                   <td className="text-center text-nowrap">
                     <Link
                       to={`/transactions/edit/${tx._id}`}
-                      className="btn btn-outline-primary btn-sm py-0 px-2 me-1"
-                      title="Edit"
+                      className="btn btn-outline-primary btn-sm py-1 px-2 me-1"
+                      title="Edit Transaction"
                     >
-                      Edit
+                      <i className="bi bi-pencil-square me-1"></i>Edit
                     </Link>
                     <button
-                      className="btn btn-outline-danger btn-sm py-0 px-2"
+                      className="btn btn-outline-danger btn-sm py-1 px-2"
                       onClick={() => onDelete(tx._id)}
                       disabled={isDeletingId === tx._id}
-                      title="Delete"
+                      title="Delete Transaction"
                     >
                       {isDeletingId === tx._id ? (
                         <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                       ) : (
-                        'Delete'
+                        <>
+                          <i className="bi bi-trash3 me-1"></i>Delete
+                        </>
                       )}
                     </button>
                   </td>

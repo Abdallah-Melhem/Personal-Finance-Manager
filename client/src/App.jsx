@@ -9,6 +9,7 @@ import Transactions from './pages/Transactions';
 import AddTransaction from './pages/AddTransaction';
 import EditTransaction from './pages/EditTransaction';
 import Profile from './pages/Profile';
+import './App.css';
 
 function App() {
   return (

@@ -141,18 +141,21 @@ const TransactionForm = ({
           <label htmlFor="amountInput" className="form-label small fw-semibold">
             Amount ($) <span className="text-danger">*</span>
           </label>
-          <input
-            type="number"
-            step="0.01"
-            min="0.01"
-            className="form-control"
-            id="amountInput"
-            name="amount"
-            placeholder="0.00"
-            value={formData.amount}
-            onChange={handleChange}
-            required
-          />
+          <div className="input-group">
+            <span className="input-group-text bg-light fw-bold text-muted">$</span>
+            <input
+              type="number"
+              step="0.01"
+              min="0.01"
+              className="form-control"
+              id="amountInput"
+              name="amount"
+              placeholder="0.00"
+              value={formData.amount}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
 
         {/* Category */}
@@ -160,20 +163,25 @@ const TransactionForm = ({
           <label htmlFor="categorySelect" className="form-label small fw-semibold">
             Category <span className="text-danger">*</span>
           </label>
-          <select
-            className="form-select"
-            id="categorySelect"
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            required
-          >
-            {availableCategories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
+          <div className="input-group">
+            <span className="input-group-text bg-light text-muted">
+              <i className="bi bi-tag"></i>
+            </span>
+            <select
+              className="form-select"
+              id="categorySelect"
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              required
+            >
+              {availableCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Date */}
@@ -181,15 +189,20 @@ const TransactionForm = ({
           <label htmlFor="dateInput" className="form-label small fw-semibold">
             Date <span className="text-danger">*</span>
           </label>
-          <input
-            type="date"
-            className="form-control"
-            id="dateInput"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            required
-          />
+          <div className="input-group">
+            <span className="input-group-text bg-light text-muted">
+              <i className="bi bi-calendar-event"></i>
+            </span>
+            <input
+              type="date"
+              className="form-control"
+              id="dateInput"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
 
         {/* Description */}
@@ -197,16 +210,21 @@ const TransactionForm = ({
           <label htmlFor="descriptionInput" className="form-label small fw-semibold">
             Description / Notes
           </label>
-          <input
-            type="text"
-            className="form-control"
-            id="descriptionInput"
-            name="description"
-            placeholder="e.g., Grocery shopping, Client payment"
-            value={formData.description}
-            onChange={handleChange}
-            maxLength="200"
-          />
+          <div className="input-group">
+            <span className="input-group-text bg-light text-muted">
+              <i className="bi bi-card-text"></i>
+            </span>
+            <input
+              type="text"
+              className="form-control"
+              id="descriptionInput"
+              name="description"
+              placeholder="e.g., Grocery shopping, Client payment"
+              value={formData.description}
+              onChange={handleChange}
+              maxLength="200"
+            />
+          </div>
         </div>
       </div>
 
