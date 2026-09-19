@@ -5,8 +5,9 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const connectDB = require('./config/db');
 
-// Load environment variables from .env in server directory or root
+// Load environment variables from server/.env or root .env
 dotenv.config({ path: path.resolve(__dirname, '.env') });
+dotenv.config({ path: path.resolve(__dirname, '..', '.env'), override: false });
 
 const app = express();
 
