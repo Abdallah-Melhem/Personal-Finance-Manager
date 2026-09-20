@@ -174,12 +174,7 @@ npm install
 
 ### 3. Set Up Environment Variables
 
-```bash
-# Copy the example environment file
-cp server/.env.example server/.env
-```
-
-Then open `server/.env` and fill in your values:
+open `.env` and fill in your values:
 
 ```env
 MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/fintrack?retryWrites=true&w=majority
@@ -203,7 +198,7 @@ Then open your browser at: **[http://localhost:5173](http://localhost:5173)**
 
 ## ⚙️ Environment Variables
 
-Create a file at `server/.env` based on `server/.env.example`:
+Create a file at `server/.env`:
 
 | Variable | Description | Example |
 |---|---|---|
