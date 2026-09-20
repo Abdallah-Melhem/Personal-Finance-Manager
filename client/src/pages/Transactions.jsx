@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { Plus, CheckCircle2, AlertCircle, X } from 'lucide-react';
 import API from '../services/api';
 import TransactionList from '../components/TransactionList';
 import TransactionFilters from '../components/TransactionFilters';
@@ -116,74 +117,110 @@ const Transactions = () => {
   const isFiltered = Object.values(filters).some((v) => v !== '');
 
   return (
-    <div className="container py-4">
+    <div className="transactions-container">
       {/* Header */}
-      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
         <div>
-          <h2 className="fw-bold mb-1 text-primary">Transactions</h2>
-          <p className="text-muted mb-0 small">
+          <div className="d-flex align-items-center gap-2 mb-1">
+            <h2 className="fw-bold text-white mb-0">Transactions</h2>
+            <span
+              className="badge"
+              style={{
+                backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                color: 'var(--accent)',
+                border: '1px solid rgba(139, 92, 246, 0.35)',
+                fontSize: '0.75rem',
+              }}
+            >
+              {totalCount} Total
+            </span>
+          </div>
+          <p className="text-muted small mb-0">
             {isFiltered
-              ? `Showing ${totalCount} result${totalCount !== 1 ? 's' : ''} for active filters.`
-              : `You have ${totalCount} transaction${totalCount !== 1 ? 's' : ''} total.`}
+              ? `Showing results matching your active filters (${totalCount} found).`
+              : 'Complete history of all recorded income and expenses.'}
           </p>
         </div>
-        <Link to="/transactions/add" className="btn btn-primary px-3 shadow-sm">
-          + Add Transaction
+
+        <Link
+          to="/transactions/add"
+          className="btn btn-primary px-3 shadow-sm align-self-start align-self-sm-auto"
+        >
+          <Plus size={18} />
+          <span>Add Transaction</span>
         </Link>
       </div>
 
-      {/* Feedback */}
+      {/* Feedback Alert */}
       {feedback.message && (
         <div
-          className={`alert alert-${feedback.type} alert-dismissible fade show py-2 small mb-3`}
+          className={`alert alert-${feedback.type} alert-dismissible fade show py-2 px-3 small mb-4 d-flex align-items-center justify-content-between`}
           role="alert"
         >
-          {feedback.message}
+          <div className="d-flex align-items-center gap-2">
+            {feedback.type === 'success' ? (
+              <CheckCircle2 size={16} className="text-success" />
+            ) : (
+              <AlertCircle size={16} className="text-danger" />
+            )}
+            <span>{feedback.message}</span>
+          </div>
           <button
             type="button"
-            className="btn-close py-2"
+            className="btn btn-link text-muted p-0 ms-2"
             onClick={() => setFeedback({ type: '', message: '' })}
             aria-label="Close"
-          ></button>
+          >
+            <X size={16} />
+          </button>
         </div>
       )}
 
-      {/* Filters */}
+      {/* Filters Bar */}
       <TransactionFilters
         filters={filters}
         onChange={handleFilterChange}
         onReset={handleResetFilters}
       />
 
-      {/* Content */}
+      {/* Content State */}
       {loading ? (
-        <LoadingSpinner message="Fetching your transactions..." />
+        <LoadingSpinner message="Fetching your transaction records..." />
       ) : error ? (
         <ErrorMessage
           message={error}
           onRetry={() => fetchTransactions(filters, currentPage)}
         />
       ) : transactions.length === 0 ? (
-        <div className="card border-0 shadow-sm p-5 text-center mt-2">
-          <div className="text-muted mb-3 fs-1">🔍</div>
-          <h5 className="fw-bold text-secondary">
-            {isFiltered ? 'No transactions match your filters' : 'No transactions yet'}
+        <div className="card p-5 text-center mt-2 border-0">
+          <div
+            className="d-inline-flex align-items-center justify-content-center p-3 rounded-circle mx-auto mb-3"
+            style={{
+              backgroundColor: 'rgba(139, 92, 246, 0.1)',
+              border: '1px solid rgba(139, 92, 246, 0.25)',
+              color: 'var(--accent)',
+            }}
+          >
+            <Plus size={32} />
+          </div>
+          <h5 className="fw-bold text-white mb-2">
+            {isFiltered ? 'No Transactions Match Filters' : 'No Transactions Recorded'}
           </h5>
           <p className="text-muted small mb-3">
             {isFiltered
-              ? 'Try adjusting the search terms or clearing the filters.'
-              : 'Add your first income or expense to get started.'}
+              ? 'Try modifying your search criteria or resetting filters to see more.'
+              : 'Add your first transaction entry to start tracking.'}
           </p>
           <div className="d-flex justify-content-center gap-2">
             {isFiltered && (
               <button
-                className="btn btn-outline-secondary btn-sm"
+                className="btn btn-outline-secondary btn-sm px-3"
                 onClick={handleResetFilters}
               >
                 Clear Filters
               </button>
             )}
-            <Link to="/transactions/add" className="btn btn-primary btn-sm">
+            <Link to="/transactions/add" className="btn btn-primary btn-sm px-3">
               Add Transaction
             </Link>
           </div>
@@ -195,9 +232,13 @@ const Transactions = () => {
             onDelete={handleInitiateDelete}
             isDeletingId={isDeletingId}
           />
-          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-2 gap-2">
+
+          {/* Pagination & Stats bar */}
+          <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center mt-3 gap-3 p-2">
             <p className="text-muted small mb-0">
-              Page {currentPage} of {totalPages} &nbsp;·&nbsp; {totalCount} total record{totalCount !== 1 ? 's' : ''}
+              Showing page <strong className="text-white">{currentPage}</strong> of{' '}
+              <strong className="text-white">{totalPages}</strong> &nbsp;·&nbsp;{' '}
+              {totalCount} records
             </p>
             <Pagination
               currentPage={currentPage}
@@ -208,12 +249,12 @@ const Transactions = () => {
         </>
       )}
 
-      {/* Reusable Delete Confirmation Modal */}
+      {/* Confirmation Modal */}
       <ConfirmModal
         show={!!deleteTargetId}
         title="Delete Transaction"
-        message="Are you sure you want to permanently delete this transaction? This action cannot be undone."
-        confirmText="Delete"
+        message="Are you sure you want to permanently delete this transaction record? This action cannot be reverted."
+        confirmText="Delete Record"
         cancelText="Cancel"
         confirmVariant="danger"
         isProcessing={!!isDeletingId}

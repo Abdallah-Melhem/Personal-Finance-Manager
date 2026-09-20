@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft, AlertCircle } from 'lucide-react';
 import API from '../services/api';
 import TransactionForm from '../components/TransactionForm';
 
@@ -27,12 +28,25 @@ const AddTransaction = () => {
   };
 
   return (
-    <div className="container py-4">
+    <div className="add-transaction-container">
+      {/* Top back navigation */}
+      <div className="mb-4">
+        <Link
+          to="/transactions"
+          className="d-inline-flex align-items-center gap-2 text-decoration-none text-muted small hover-accent"
+          style={{ transition: 'color 0.2s ease' }}
+        >
+          <ArrowLeft size={16} />
+          <span>Back to Transactions</span>
+        </Link>
+      </div>
+
       <div className="row justify-content-center">
-        <div className="col-12 col-md-8 col-lg-7">
+        <div className="col-12 col-lg-8 col-xl-7">
           {error && (
-            <div className="alert alert-danger py-2 small mb-3" role="alert">
-              {error}
+            <div className="alert alert-danger py-2 px-3 small mb-4 d-flex align-items-center gap-2" role="alert">
+              <AlertCircle size={16} className="text-danger flex-shrink-0" />
+              <span>{error}</span>
             </div>
           )}
           <TransactionForm

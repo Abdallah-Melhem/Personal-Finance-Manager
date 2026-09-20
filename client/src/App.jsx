@@ -1,6 +1,6 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import Navbar from './components/Navbar';
+import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -15,78 +15,84 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="min-vh-100 d-flex flex-column bg-light">
-          <Navbar />
-          <main className="flex-grow-1">
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+        <Routes>
 
-              {/* Protected Routes */}
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/transactions"
-                element={
-                  <ProtectedRoute>
-                    <Transactions />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/transactions/add"
-                element={
-                  <ProtectedRoute>
-                    <AddTransaction />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/transactions/edit/:id"
-                element={
-                  <ProtectedRoute>
-                    <EditTransaction />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-              {/* Root redirect */}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Dashboard />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transactions"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Transactions />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transactions/add"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <AddTransaction />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transactions/edit/:id"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <EditTransaction />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Profile />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
 
-              {/* Catch-all 404 */}
-              <Route
-                path="*"
-                element={
-                  <div className="container py-5 text-center">
-                    <h1 className="display-4 fw-bold text-secondary">404</h1>
-                    <p className="lead">Page Not Found</p>
-                    <a href="/dashboard" className="btn btn-primary btn-sm">
-                      Return to Dashboard
-                    </a>
-                  </div>
-                }
-              />
-            </Routes>
-          </main>
-          <footer className="py-3 bg-white border-top text-center text-muted small">
-            Personal Finance Management System &copy; {new Date().getFullYear()} — Academic Full-Stack MERN Project
-          </footer>
-        </div>
+
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+
+          <Route
+            path="*"
+            element={
+              <div className="auth-page text-center">
+                <div className="auth-card">
+                  <div className="display-1 fw-bold text-primary mb-2">404</div>
+                  <h3 className="text-white fw-bold mb-2">Page Not Found</h3>
+                  <p className="text-muted mb-4 small">
+                    The requested page could not be located in your financial dashboard.
+                  </p>
+                  <Link to="/dashboard" className="btn btn-primary w-100">
+                    Return to Dashboard
+                  </Link>
+                </div>
+              </div>
+            }
+          />
+        </Routes>
       </AuthProvider>
     </Router>
   );
