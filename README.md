@@ -340,6 +340,3 @@ node testRunner.js
 
 This project is built as an academic assignment and is open for educational reference.
 
----
-
-*Built with ❤️ using the MERN Stack*
