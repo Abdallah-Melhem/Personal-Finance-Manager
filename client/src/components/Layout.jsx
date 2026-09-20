@@ -26,7 +26,7 @@ const Layout = ({ children }) => {
         {/* Modern Dark Footer */}
         <footer className="app-footer text-center">
           <div className="container-fluid">
-            <span>FinanceFlow &copy; {new Date().getFullYear()} — Academic MERN Personal Finance Management System</span>
+            <span>FinanceFlow &copy; {new Date().getFullYear()} — Abdallah Melhem</span>
           </div>
         </footer>
       </div>
